@@ -2,11 +2,17 @@
 
 namespace common\base;
 
-
+use common\util\UtilObject;
 use yii\base\Model;
 
 class BaseForm extends Model
 {
+    /**
+     * @param string $column 列名
+     * @param $class
+     * @return mixed
+     * @throws BaseException
+     */
     public static function getColumnComment($column, $class)
     {
         $prefix = 'common\models\\';
@@ -31,21 +37,23 @@ class BaseForm extends Model
         return $comment;
     }
 
-    public static function checkNull($column, $class)
+    /**
+     * @param array $column
+     * @param $class
+     * @throws BaseException
+     */
+    public static function checkNull(array $column = [], $class)
     {
         if (empty($column)) {
             throw new BaseException(BaseException::REQUIRED_PARAM_NOT_PROVIDED, '');
         }
-        if (is_array($column)) {
-            foreach ($column as $value) {
-                if ($value === null) {
-                    $comment = self::getColumnComment($value, $class);
-                    throw new BaseException(BaseException::REQUIRED_PARAM_NOT_PROVIDED, $comment . '不能为空');
-                }
-            }
-        } else {
-            return self::checkNull([$column], $class);
-        }
 
+        foreach ($column as $k => $value) {
+            if ($value === null) {
+                $k = UtilObject::humpToLine($k);
+                $comment = self::getColumnComment($k, $class);
+                throw new BaseException(BaseException::REQUIRED_PARAM_NOT_PROVIDED, $comment . '不能为空');
+            }
+        }
     }
 }

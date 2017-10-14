@@ -46,7 +46,7 @@ class Http
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($paramArray));// data是数组格式
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $paramArray);// data是数组格式
         $result = curl_exec($ch);
 
         return $result;

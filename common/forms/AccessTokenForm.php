@@ -4,6 +4,7 @@ namespace common\forms;
 
 use common\base\BaseException;
 use common\base\BaseForm;
+use common\enums\StatusEnum;
 use common\models\AccessToken;
 
 class AccessTokenForm extends BaseForm
@@ -12,7 +13,7 @@ class AccessTokenForm extends BaseForm
 
     public static function createAccessToken($accessToken = null, $tokenType = null)
     {
-        parent::checkNull([$accessToken, $tokenType], __CLASS__);
+        parent::checkNull(['accessToken' => $accessToken, 'tokenType' => $tokenType], __CLASS__);
 
         $model = new AccessToken();
         $model->access_token = $accessToken;
@@ -25,5 +26,21 @@ class AccessTokenForm extends BaseForm
         }
 
         return $model->id;
+    }
+
+    public static function getAccessToken($tokenType = null)
+    {
+        parent::checkNull(['tokenType' => $tokenType], __CLASS__);
+
+        $accessToken = AccessToken::find()
+            ->where(['token_type' => $tokenType, 'status' => StatusEnum::STATUS_ACTIVE])
+            ->orderBy('id DESC')
+            ->one();
+
+        if ( ! isset($accessToken->access_token)) {
+            throw new BaseException(BaseException::ACCESS_TOKEN_NOT_EXISTS, '');
+        }
+
+        return $accessToken->access_token;
     }
 }

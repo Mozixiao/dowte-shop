@@ -15,10 +15,14 @@ class BaseException extends Exception
     const REQUIRED_PARAM_NOT_PROVIDED = 5001;
     const MODEL_SAVE_ERROR = 5002;
 
+    const ACCESS_TOKEN_NOT_EXISTS = 6001;
+
     protected static $exceptions = [
         self::CODE_SERVER_ERROR => 'Server error',
         self::REQUIRED_PARAM_NOT_PROVIDED => 'Miss required param!',
         self::MODEL_SAVE_ERROR => 'Model save error',
+
+        self::ACCESS_TOKEN_NOT_EXISTS => 'The access token is not exists',
     ];
 
     public function __construct($errorCode = NULL, $errorMessage = NULL, $params = [])
