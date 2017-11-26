@@ -15,5 +15,12 @@ return [
         'menu' => [
             'list' => 'https://api.weixin.qq.com/cgi-bin/menu/get',
         ],
+    ],
+    'ZhiXin' => [
+        'api' => [
+            'weather' => 'https://api.seniverse.com/v3/weather/daily.json',
+        ],
+        'key' => 'e0xoclvi8jdb3ovs',
+        'uid' => 'U4DE154E11',
     ]
 ];

@@ -1,0 +1,258 @@
+
+.car-container{
+    width: 100%;
+    background-color: #fff;
+    min-height: 250px;
+    border: 1px solid #f4f4f4;
+    padding: 15px 0;
+    overflow: hidden;
+}
+.margin-15{
+    margin: 15px 0;
+}
+a{
+    cursor: pointer;
+}
+sup{
+        color: red;
+}
+.margin-bottom20{
+    margin-bottom: 14px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0;
+}
+
+input[type="number"]{
+    -moz-appearance:textfield;
+}
+input.parsley-error {
+    border-color: #d7000f;
+}
+.parsley-errors-list {
+    list-style: none;
+    padding: 5px 0;
+    color: #d7000f;
+}
+
+/*上传部分样式*/
+.upload-area img {
+    width: 100%;
+    margin-bottom: 10px;
+    display: block;
+}
+.upload-area img.holder {
+    width: 50%;
+}
+.label-font-style{
+    margin-top: 5px;
+}
+.img-logo{
+    width: 30px;
+    height: 30px;
+}
+
+
+/*可编辑下拉框列表*/
+.auto-div{
+    width: 100%;
+    position:absolute;
+    left: 0;
+    top: 34px;
+    z-index: 1001;
+}
+.auto-div ul {
+    background-color: #fff;
+    overflow-y: auto;
+    max-height: 180px;
+    box-shadow: 0px 4px 10px #b5b5b5;
+}
+.auto-div ul li {
+    cursor: pointer;
+    padding-left: 10px;
+}
+.auto-div ul li:hover, .auto-div ul li:active {
+    background-color: #d2d6de;
+}
+.auto-div ul li.active {
+    background-color: #d2d6de;
+}
+/*新增关联车型*/
+.label-text{
+    height:30px;
+    width:70px;
+    line-height: 30px;
+    float: left;
+}
+.label-text-div{
+    float: left;
+    width: 560px;
+}
+.label-text-div span{
+    display:inline-block;
+    width: 70px;
+    padding-top: 10px;
+    user-select:none
+}
+/*车型适配筛选区域*/
+.filter-wrap{
+    margin: 10px 0;
+    width: 100%;
+    overflow: hidden;
+}
+.filter-area{
+    margin: 0 10px;
+    background: #f0f0f0;
+    padding: 20px;
+    font-size: 0;
+}
+.filter-car-name a{
+    display: inline-block;
+    margin:0 10px 5px 0;
+    line-height: 30px;
+    font-size: 14px;
+    background: #f3f9f9;
+    border: 1px solid #bcdbe9;
+    padding: 0 20px;
+    text-align: center;
+    color: #333;
+}
+.filter-car-name a.active,.filter-car-name a:hover{
+    border-color: #d73925;
+    background: #fff;
+    color: #d73925;
+}
+/*.filter-car-vendor{
+    border: 1px solid #dedede;
+}*/
+.filter-car-vendor dl{
+    display: flex;
+    flex-direction: row;
+    line-height: 40px;
+    color: #666;
+    font-size: 14px;
+    background: #fff;
+    margin-bottom: 0;
+    border: 1px solid #dedede;
+    margin-top: -1px;
+}
+.filter-car-vendor dl dt{
+    flex: 1;
+    padding-left: 15px;
+    width: 100%;
+    text-align: left;
+    background: #f7f5f5;
+    line-height: 35px;
+}
+.filter-car-vendor dl dd{
+    flex: 8;
+    width: 970px;
+    padding-left: 20px;
+}
+.filter-car-vendor dl dd div a{
+    color: #333;
+    display: inline-block;
+    margin-right: 20px;
+    padding: 0 5px;
+    line-height: 35px;
+}
+.filter-car-vendor a:hover{
+    color: red;
+}
+
+.filter-car-select{
+    padding: 10px;
+}
+.filter-car-select .selected{
+    font-size: 14px;
+    color: #333333;
+}
+.filter-car-select a{
+    display: inline-block;
+    border: 1px solid #e7e7e7;
+    padding-left: 4px;
+    font-size: 12px;
+    color: #333;
+}
+.filter-car-select a em,.filter-car-select a i{
+    color: #d7000f;
+}
+.filter-car-select a .cate-close{
+    display: inline-block;
+    width: 22px;
+    height: 100%;
+    margin-left: 10px;
+    text-align: center;
+}
+.filter-car-select a:hover{
+    color: #333;
+    border-color: #d7000f;
+}
+.filter-car-select a:hover .cate-close{
+    background: #d7000f;
+}
+.filter-car-select a:hover .cate-close i{
+    color: #fff;
+}
+
+/*车型适配页面底部分页*/
+.foot-page{
+    margin: 0 0 30px 10px;
+    height: 34px;
+    clear: both;
+}
+.foot-page ul,.foot-page li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.foot-page li{
+    float: left;
+    width: 32px;
+    line-height: 32px;
+    text-align: center;
+    margin-left: -1px;
+}
+.foot-page li a{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #dedede;
+    color: #666;
+    background: #fafafa;
+}
+.foot-page .first-page a{
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+.foot-page .last-page a{
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.foot-page .first-page,.foot-page .last-page{
+    width: 54px;
+}
+.foot-page .up-page,.foot-page .down-page{
+    width: 68px;
+}
+.foot-page li a.active,.foot-page li a.active:hover{
+    color: #fff;
+    background: #337ab7;
+    border: 1px solid #337ab7;
+}
+.foot-page li a:hover{
+    color: #23527c;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.unUse{
+    pointer-events: none;
+    user-select: none;
+}
+
+.btn-link:hover {
+    text-decoration: none;
+}

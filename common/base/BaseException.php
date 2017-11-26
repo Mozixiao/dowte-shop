@@ -17,12 +17,26 @@ class BaseException extends Exception
 
     const ACCESS_TOKEN_NOT_EXISTS = 6001;
 
+    //file
+    const FILE_UPLOAD_FAILED = 7001;
+    const FILE_ALREADY_EXIST = 7002;
+    const FILE_SAVE_FAILED = 7003;
+
+    //ocr
+    const RECOGNIZE_FALSE = 8001;
+
     protected static $exceptions = [
         self::CODE_SERVER_ERROR => 'Server error',
-        self::REQUIRED_PARAM_NOT_PROVIDED => 'Miss required param!',
+        self::REQUIRED_PARAM_NOT_PROVIDED => 'Miss required param',
         self::MODEL_SAVE_ERROR => 'Model save error',
 
         self::ACCESS_TOKEN_NOT_EXISTS => 'The access token is not exists',
+
+        self::FILE_UPLOAD_FAILED => 'File uploads failed',
+        self::FILE_ALREADY_EXIST => 'The file is already exist',
+        self::FILE_SAVE_FAILED => 'Save files failed',
+
+        self::RECOGNIZE_FALSE => 'Recognize false',
     ];
 
     public function __construct($errorCode = NULL, $errorMessage = NULL, $params = [])

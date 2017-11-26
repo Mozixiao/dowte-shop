@@ -10,37 +10,33 @@ use common\models\AccessToken;
 class AccessTokenForm extends BaseForm
 {
     const WECHAT_TYPE = 1;
+    const BAIDU_PLATE1_TOKEN_TYPE = 2;
+    const BAIDU_BASIC_TOKEN_TYPE = 3;
 
-    public static function createAccessToken($accessToken = null, $tokenType = null)
+    public function createAccessToken($accessToken, $tokenType)
     {
-        parent::checkNull(['accessToken' => $accessToken, 'tokenType' => $tokenType], __CLASS__);
-
         $model = new AccessToken();
         $model->access_token = $accessToken;
         $model->token_type = $tokenType;
         $model->created_at = time();
         $model->updated_at = time();
 
-        if ( ! $model->save()) {
+        if (! $model->validate() || ! $model->save()) {
             throw new BaseException(BaseException::MODEL_SAVE_ERROR, '');
         }
 
         return $model->id;
     }
 
-    public static function getAccessToken($tokenType = null)
+    public function getAccessToken($tokenType, $columns = ['access_token', 'created_at'])
     {
-        parent::checkNull(['tokenType' => $tokenType], __CLASS__);
-
         $accessToken = AccessToken::find()
+            ->select($columns)
             ->where(['token_type' => $tokenType, 'status' => StatusEnum::STATUS_ACTIVE])
             ->orderBy('id DESC')
+            ->asArray()
             ->one();
 
-        if ( ! isset($accessToken->access_token)) {
-            throw new BaseException(BaseException::ACCESS_TOKEN_NOT_EXISTS, '');
-        }
-
-        return $accessToken->access_token;
+        return $accessToken;
     }
 }
