@@ -26,19 +26,12 @@ class Http
     /**
      * @param $url
      * @param $paramArray
-     * @param array $content_type
+     * @param array $header
      * @return mixed
      */
-    public static function curlPost($url, $paramArray, array $content_type = []){
+    public static function curlPost($url, $paramArray, array $header = ['Content-Type:application/json'])
+    {
         $ch = curl_init();
-        if (empty($content_type)) {
-            $header = [
-                'Content-Type:application/json',
-            ];
-
-        } else {
-            $header = $content_type;
-        }
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");

@@ -16,11 +16,14 @@ return [
             'list' => 'https://api.weixin.qq.com/cgi-bin/menu/get',
         ],
     ],
-    'ZhiXin' => [
+    'HeFeng' => [
         'api' => [
-            'weather' => 'https://api.seniverse.com/v3/weather/daily.json',
+            'weather' =>
+                [
+                    'now' =>'https://free-api.heweather.com/s6/weather/now',
+                    'three' => 'https://free-api.heweather.com/s6/weather/forecast',
+                ],
         ],
-        'key' => 'e0xoclvi8jdb3ovs',
-        'uid' => 'U4DE154E11',
+        'key' => 'f775cfee861445c1bd0373cea7b7e300',
     ]
 ];

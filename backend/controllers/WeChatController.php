@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use \Yii;
 use common\base\BaseEndController;
-use common\sdk\ZhiXin;
+use common\sdk\HeFeng;
 use common\util\Http;
 
 class WeChatController extends BaseEndController
@@ -105,18 +105,46 @@ class WeChatController extends BaseEndController
                 echo $resultStr;
                 break;
             case '2' :
-                $ZhiXin = new ZhiXin(\Yii::$app->params['ZhiXin']['key'], \Yii::$app->params['ZhiXin']['uid']);
+                $HeFeng = new HeFeng(\Yii::$app->params['HeFeng']['key']);
                 $city = str_replace('天气', '', $keyWord);
-                $weather = json_decode($ZhiXin->getWeather($city),true);
-                $daily = $weather['results'][0]['daily'][0];
-                $daily['precip'] = empty($daily['precip']) ? 0 : $daily['precip'];
-                $content = "今日:{$daily['date']}                       白天:{$daily['text_day']}, 晚上:{$daily['text_night']}                       最高气温:{$daily['high']}℃, 最低气温:{$daily['low']}℃  降雨率:{$daily['precip']}%, 风力:{$daily['wind_scale']}级";
-                $resultStr = sprintf($this->textTpl, $this->fromUsername, $this->toUsername, $this->time, $msgType, $content);
+                if (empty($city)) {
+                    echo $this->returnText('请提供你要查询天气的城市名称，如北京天气');
+                    exit;
+                }
+                $weather = json_decode($HeFeng->getNowWeather($city), true);
+                $threeWeather = json_decode($HeFeng->getThreeWeather($city), true);
+                if (!isset($weather['HeWeather6'][0]) || !isset($threeWeather['HeWeather6'][0])) {
+                    echo $this->returnText('哎呀，没有查到你要查询城市的天气');
+                    exit;
+                }
+                $daily = $weather['HeWeather6'][0];
+                $threeDay = $threeWeather['HeWeather6'][0];
+                $firstCond = $threeDay['daily_forecast'][0]['cond_txt_d'] == $threeDay['daily_forecast'][0]['cond_txt_n'] ? $threeDay['daily_forecast'][0]['cond_txt_d'] : "白天: {$threeDay['daily_forecast'][0]['cond_txt_d']}, 夜间: {$threeDay['daily_forecast'][0]['cond_txt_n']}";
+                $secondCond = $threeDay['daily_forecast'][1]['cond_txt_d'] == $threeDay['daily_forecast'][1]['cond_txt_n'] ? $threeDay['daily_forecast'][1]['cond_txt_d'] : "白天: {$threeDay['daily_forecast'][1]['cond_txt_d']}, 夜间: {$threeDay['daily_forecast'][1]['cond_txt_n']}";
+                $thirdCond = $threeDay['daily_forecast'][2]['cond_txt_d'] == $threeDay['daily_forecast'][2]['cond_txt_n'] ? $threeDay['daily_forecast'][2]['cond_txt_d'] : "白天: {$threeDay['daily_forecast'][2]['cond_txt_d']}, 夜间: {$threeDay['daily_forecast'][2]['cond_txt_n']}";
+                $firstWind = preg_match('/\d/', $threeDay['daily_forecast'][0]['wind_sc']) ? "风力{$threeDay['daily_forecast'][0]['wind_sc']}级" : $threeDay['daily_forecast'][0]['wind_sc'];
+                $secondWind = preg_match('/\d/', $threeDay['daily_forecast'][1]['wind_sc']) ? "风力{$threeDay['daily_forecast'][1]['wind_sc']}级" : $threeDay['daily_forecast'][1]['wind_sc'];
+                $thirdWind = preg_match('/\d/', $threeDay['daily_forecast'][2]['wind_sc']) ? "风力{$threeDay['daily_forecast'][2]['wind_sc']}级" : $threeDay['daily_forecast'][2]['wind_sc'];
+
+                $contentArr = [
+                    "实况: {$daily['now']['cond_txt']} 气温: {$daily['now']['tmp']}℃, 降水量: {$daily['now']['pcpn']}",
+                    "今天: $firstCond 气温: {$threeDay['daily_forecast'][0]['tmp_min']}℃~{$threeDay['daily_forecast'][0]['tmp_max']}℃, {$firstWind}, 降水率: {$threeDay['daily_forecast'][0]['pop']}%",
+                    "明天: $secondCond 气温: {$threeDay['daily_forecast'][1]['tmp_min']}℃~{$threeDay['daily_forecast'][1]['tmp_max']}℃, {$secondWind}, 降水率: {$threeDay['daily_forecast'][1]['pop']}%",
+                    "后天: $thirdCond 温度: {$threeDay['daily_forecast'][2]['tmp_min']}℃~{$threeDay['daily_forecast'][2]['tmp_max']}℃, {$thirdWind}, 降水率: {$threeDay['daily_forecast'][2]['pop']}%",
+                ];
+
+                $resultStr = $this->returnText(implode("\n", $contentArr));
                 echo $resultStr;
                 break;
             default :
+                echo '';
                 exit;
         }
+    }
+
+    private function returnText($content)
+    {
+        return sprintf($this->textTpl, $this->fromUsername, $this->toUsername, $this->time, 'text', $content);
     }
 
     private function matchKeys($keyWords)
@@ -126,7 +154,6 @@ class WeChatController extends BaseEndController
         }
         return $keyWords;
     }
-
 ///----------------------------------------------------------------------------------
     private function checkSignature() #这个函数验证过之后就可以删除了
     {
