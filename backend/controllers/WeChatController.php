@@ -22,13 +22,16 @@ class WeChatController extends BaseEndController
     public $toUsername;
     public $time;
 
-    public function _error_log($res){
-        error_log(print_r($res,1), 3, '/Users/dowte/error1.log');
-    }
-
     public function beforeAction($action)
     {
-        return $this->responseMsg();
+        if (isset($_GET["echostr"])) {
+            if ($this->checkSignature()) {
+                echo $_GET["echostr"];
+                exit;
+            }
+        } else {
+           return $this->responseMsg();
+        }
     }
 
     public $accessTokenParam = '?access_token=';
@@ -36,14 +39,7 @@ class WeChatController extends BaseEndController
     public function actionIndex()
     {
         //valid signature , option
-        if (isset($_GET["echostr"])) {
-            if ($this->checkSignature()) {
-                echo $_GET["echostr"];
-                exit;
-            }
-        } else {
-            $this->responseMsg();
-        }
+
     }
 
     public function actionMenuList()
@@ -115,12 +111,10 @@ class WeChatController extends BaseEndController
                 $daily = $weather['results'][0]['daily'][0];
                 $daily['precip'] = empty($daily['precip']) ? 0 : $daily['precip'];
                 $content = "今日:{$daily['date']}                       白天:{$daily['text_day']}, 晚上:{$daily['text_night']}                       最高气温:{$daily['high']}℃, 最低气温:{$daily['low']}℃  降雨率:{$daily['precip']}%, 风力:{$daily['wind_scale']}级";
-                $this->_error_log($weather);
                 $resultStr = sprintf($this->textTpl, $this->fromUsername, $this->toUsername, $this->time, $msgType, $content);
                 echo $resultStr;
                 break;
             default :
-                $this->_error_log(2);
                 exit;
         }
     }
