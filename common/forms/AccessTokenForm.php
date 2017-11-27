@@ -6,12 +6,12 @@ use common\base\BaseException;
 use common\base\BaseForm;
 use common\enums\StatusEnum;
 use common\models\AccessToken;
+use common\sdk\BaiduOcr;
 
 class AccessTokenForm extends BaseForm
 {
     const WECHAT_TYPE = 1;
-    const BAIDU_PLATE1_TOKEN_TYPE = 2;
-    const BAIDU_BASIC_TOKEN_TYPE = 3;
+    const BAIDU_BASIC_TOKEN_TYPE = 2;
 
     public function createAccessToken($accessToken, $tokenType)
     {
@@ -36,6 +36,22 @@ class AccessTokenForm extends BaseForm
             ->orderBy('id DESC')
             ->asArray()
             ->one();
+
+        return $accessToken;
+    }
+
+    public function getBaiduToken($type, $apiKey, $secretKey)
+    {
+        $accessToken = $this->getAccessToken($type);
+        if (empty($accessToken) || (time() - $accessToken['created_at'])/86400 >= 30) {
+            $baidu = new BaiduOcr($apiKey, $secretKey);
+            $res = $baidu->getAccessToken();
+            $this->createAccessToken($res, $type);
+            $accessToken = $res;
+
+        } else {
+            $accessToken = $accessToken['access_token'];
+        }
 
         return $accessToken;
     }

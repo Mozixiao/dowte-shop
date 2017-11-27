@@ -5,6 +5,7 @@ namespace backend\controllers;
 
 use common\base\BaseEndController;
 use common\base\BaseException;
+use common\forms\AccessTokenForm;
 use common\sdk\BaiduOcr;
 
 class ToolController extends BaseEndController
@@ -16,7 +17,10 @@ class ToolController extends BaseEndController
         }
         if (\Yii::$app->request->isPost) {
             $ocrType = $_POST['ocr_type'];
-            $baiduOcr = new BaiduOcr();
+            $apiKey = \Yii::$app->params['baidu']['words']['apiKey'];
+            $secretKey = \Yii::$app->params['baidu']['words']['secretKey'];
+            $accessToken = (new AccessTokenForm())->getBaiduToken(AccessTokenForm::BAIDU_BASIC_TOKEN_TYPE, $apiKey, $secretKey);
+            $baiduOcr = new BaiduOcr($apiKey, $secretKey, $accessToken);
             if ($_FILES['file']['error'] > 0) {
                 throw new BaseException(BaseException::FILE_UPLOAD_FAILED, "文件上传失败" . $_FILES['file']['error']);
             }
@@ -34,7 +38,17 @@ class ToolController extends BaseEndController
             $file_content = base64_encode(fread($fp, filesize($fileSrc)));//base64编码
             fclose($fp);
             @unlink($fileSrc);
-            return $this->renderMson($baiduOcr->ocr($file_content, $ocrType));
+            switch ($ocrType) {
+                case 1 :
+                    $res = $baiduOcr->getPlate($file_content);
+                    break;
+                case 2 :
+                    $res = $baiduOcr->getWords($file_content);
+                    break;
+                default :
+                    $res = $baiduOcr->getWords($file_content);
+            }
+            return $this->renderMson($res);
         }
         return $this->renderMson(false);
     }

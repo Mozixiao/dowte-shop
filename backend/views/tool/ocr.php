@@ -9,7 +9,12 @@ $this->registerCssFile('/js/lib/upload/fileinput.min.css');
         border: none;
         background-color: transparent;
     }
-    .string { color: green; }
+    .string {
+        color: green;
+        display: inline-flex;
+        white-space: normal;
+        width: 90%;
+    }
     .number { color: darkorange; }
     .boolean { color: blue; }
     .null { color: magenta; }

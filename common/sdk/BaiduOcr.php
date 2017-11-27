@@ -3,7 +3,6 @@
 namespace common\sdk;
 
 use common\base\BaseException;
-use common\forms\AccessTokenForm;
 use common\util\Http;
 
 class BaiduOcr
@@ -12,37 +11,31 @@ class BaiduOcr
     const PLATE_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/license_plate';
     const BASIC_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic';
 
-    const PLATE_TYPE = 1;
-    const BASIC_TYPE = 2;
+    /**
+     * @var string 应用id
+     */
+    public $apiKey;
 
-    //数组key对应ding_access_token库存储的type
-    private static $keys = [
-        '2' => [//车牌
-            'ApiKey' => 'eGEcGfeLQpG8EyRcSodaklvX',
-            'SecretKey' => 'PC9SF2QxXBDqBgppzEWKrFoBUz1Zydfw',
-        ],
-        '3' => [//通用图片
-            'ApiKey' => 'eGEcGfeLQpG8EyRcSodaklvX',
-            'SecretKey' => 'PC9SF2QxXBDqBgppzEWKrFoBUz1Zydfw',
-        ],
-    ];
+    /**
+     * @var string 应用key
+     */
+    public $secretKey;
 
-    public function ocr($fileContent, $type)
+    /**
+     * @var string 请求token
+     */
+    public $accessToken;
+
+    public function __construct($apiKey, $secretKey, $accessToken = '')
     {
-        switch ($type) {
-            case self::PLATE_TYPE :
-                return $this->getPlate($fileContent);
-            case self::BASIC_TYPE :
-                return $this->getWords($fileContent);
-            default :
-                return $this->getWords($fileContent);
-        }
+        $this->apiKey = $apiKey;
+        $this->secretKey = $secretKey;
+        $this->accessToken = $accessToken;
     }
 
-    private function getPlate($file_content)
+    public function getPlate($file_content)
     {
-        $access_token = self::getAccessToken(AccessTokenForm::BAIDU_PLATE1_TOKEN_TYPE);
-        $res = self::run(self::PLATE_URL . '?access_token=' . $access_token,
+        $res = self::run(self::PLATE_URL . '?access_token=' . $this->accessToken,
             ['image' => $file_content], ['Content-Type:application/x-www-form-urlencoded']);
 
         if (isset($res['error_code'])){
@@ -65,17 +58,14 @@ class BaiduOcr
      * @return array|mixed
      * @throws BaseException
      */
-    private function getWords($file_content)
+    public function getWords($file_content)
     {
         $str = '';
-        //验证access_token
-        $access_token = self::getAccessToken(AccessTokenForm::BAIDU_BASIC_TOKEN_TYPE);
 
         for ($i = 0; $i < 3; $i ++ ){
             //执行请求
-            $res = self::run(self::BASIC_URL . '?access_token=' . $access_token,
+            $res = self::run(self::BASIC_URL . '?access_token=' . $this->accessToken,
                 ['image' => $file_content, 'detect_direction' => 'true'], ['Content-Type:application/x-www-form-urlencoded']);
-
             if (isset($res['error_code'])){
                 if ($i == 2) {
                     throw new BaseException(BaseException::RECOGNIZE_FALSE, '');
@@ -89,36 +79,37 @@ class BaiduOcr
                     return false;
 
                 } else {
-                    foreach ($res['words_result_num'] as $words) {
-                        $str .= $words['words'];
+                    foreach ($res['words_result'] as $words) {
+                        $str .= "<br>" . $words['words'];
                     }
                 }
+                break;
             }
         }
 
         return $str;
     }
 
-    private static function getAccessToken($type)
+    /**
+     * @return string
+     */
+    public function getAccessToken()
     {
-        $accessToken = new AccessTokenForm();
-        $res = $accessToken->getAccessToken($type);
-        if (empty($res) || (time() - $res['created_at'])/86400 >= 30) {
-            $res = self::run(self::GET_ACCESS_URL, [
-                'grant_type' => 'client_credentials',
-                'client_id' => self::$keys[$type]['ApiKey'],
-                'client_secret' => self::$keys[$type]['SecretKey']
-            ]);
-            $accessToken->createAccessToken($res['access_token'], $type);
-            $accessToken = $res['access_token'];
+        $res = self::run(self::GET_ACCESS_URL, [
+            'grant_type' => 'client_credentials',
+            'client_id' => $this->apiKey,
+            'client_secret' => $this->secretKey
+        ]);
 
-        } else {
-            $accessToken = $res['access_token'];
-        }
-
-        return $accessToken;
+        return $res['access_token'];
     }
 
+    /**
+     * @param $url
+     * @param $params
+     * @param array $header
+     * @return mixed
+     */
     private static function run($url, $params, $header = [])
     {
         $res = Http::curlPost($url, $params, $header);
