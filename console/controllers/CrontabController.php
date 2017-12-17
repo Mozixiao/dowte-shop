@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\sdk\WeChatSdk;
 use yii\console\Controller;
 use common\forms\AccessTokenForm;
 use common\util\Http;
@@ -10,54 +11,81 @@ class CrontabController extends Controller
 {
     public function actionWechatAccessToken()
     {
-        $appid = \Yii::$app->params['wechattest']['appid'];
-        $secret = \Yii::$app->params['wechattest']['secret'];
+        $appid = \Yii::$app->params['wechat']['appId'];
+        $secret = \Yii::$app->params['wechat']['secret'];
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$secret}";
         $accessToken = Http::get($url);
         $accessToken = json_decode($accessToken, true);
         if (isset($accessToken['access_token'])) {
-            AccessTokenForm::createAccessToken($accessToken['access_token'], AccessTokenForm::WECHAT_TYPE);
+            (new AccessTokenForm())->createAccessToken($accessToken['access_token'], AccessTokenForm::WECHAT_TYPE);
         }
+
         return true;
     }
 
     public function actionCreateMenu()
     {
-        $url = 'https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=i_itpgmoUgw9vqLifqzc5eZAmHrBn5gU5XH6hVveD7Q_Hd2db2U94JUY7cWarkhRukwxtMqIB6w5apvX1XsvkQ3EkfecomGRO752BR_241L9tmlpDtTxNaxRO_Cqj_d5GCFeAGALHK';
-        $post = <<<EOF
-{
-     "button":[
-     {    
-          "type":"click",
-          "name":"今日歌曲",
-          "key":"V1001_TODAY_MUSIC"
-      },
-      {
-           "type":"click",
-           "name":"歌手简介",
-           "key":"V1001_TODAY_SINGER"
-      },
-      {
-           "name":"菜单",
-           "sub_button":[
-           {    
-               "type":"view",
-               "name":"搜索",
-               "url":"http://www.soso.com/"
-            },
-            {
-               "type":"view",
-               "name":"视频",
-               "url":"http://v.qq.com/"
-            },
-            {
-               "type":"click",
-               "name":"赞一下我们",
-               "key":"V1001_GOOD"
-            }]
-       }]
-}
-EOF;
-        echo Http::curlPost($url, $post);
+        $accessToken = (new AccessTokenForm())->getAccessToken(AccessTokenForm::WECHAT_TYPE)->access_token;
+        $options = [
+            'appid' => \Yii::$app->params['wechat']['appId'],
+            'appsecret' => \Yii::$app->params['wechat']['secret'],
+            'token'  => $accessToken,
+        ];
+        $app  = new WeChatSdk($options);
+        $data = [
+            'button' => [
+                0 => [
+                    'name'       => '扫码',
+                    'sub_button' => [
+                        0 => [
+                            'type' => 'scancode_waitmsg',
+                            'name' => '扫码带提示',
+                            'key'  => 'rselfmenu_0_0',
+                        ],
+                        1 => [
+                            'type' => 'scancode_push',
+                            'name' => '扫码推事件',
+                            'key'  => 'rselfmenu_0_1',
+                        ],
+                    ],
+                ],
+                1 => [
+                    'name'       => '发图',
+                    'sub_button' => [
+                        0 => [
+                            'type' => 'pic_sysphoto',
+                            'name' => '系统拍照发图',
+                            'key'  => 'rselfmenu_1_0',
+                        ],
+                        1 => [
+                            'type' => 'pic_photo_or_album',
+                            'name' => '拍照或者相册发图',
+                            'key'  => 'rselfmenu_1_1',
+                        ],
+                    ],
+                ],
+                2 => [
+                    'name'       => '工具',
+                    'sub_button' => [
+                        0 => [
+                            'type' => 'click',
+                            'name' => '今日天气',
+                            'key'  => 'K1000_TODAY_WEATHER',
+                        ],
+//                        1 => [
+//                            'type' => 'pic_photo_or_album',
+//                            'name' => '拍照或者相册发图',
+//                            'key'  => 'rselfmenu_1_1',
+//                        ],
+//                        2 => [
+//                            'type' => 'location_select',
+//                            'name' => '发送位置',
+//                            'key'  => 'rselfmenu_2_0',
+//                        ]
+                    ],
+                ],
+            ],
+        ];
+        $app->createMenu($data);
     }
 }

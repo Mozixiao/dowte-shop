@@ -28,13 +28,17 @@ class AccessTokenForm extends BaseForm
         return $model->id;
     }
 
+    /**
+     * @param $tokenType
+     * @param array $columns
+     * @return array|null|\yii\db\ActiveRecord|object
+     */
     public function getAccessToken($tokenType, $columns = ['access_token', 'created_at'])
     {
         $accessToken = AccessToken::find()
             ->select($columns)
             ->where(['token_type' => $tokenType, 'status' => StatusEnum::STATUS_ACTIVE])
             ->orderBy('id DESC')
-            ->asArray()
             ->one();
 
         return $accessToken;
@@ -43,7 +47,7 @@ class AccessTokenForm extends BaseForm
     public function getBaiduToken($type, $apiKey, $secretKey)
     {
         $accessToken = $this->getAccessToken($type);
-        if (empty($accessToken) || (time() - $accessToken['created_at'])/86400 >= 30) {
+        if (empty($accessToken) || (time() - $accessToken->access_token)/86400 >= 30) {
             $baidu = new BaiduOcr($apiKey, $secretKey);
             $res = $baidu->getAccessToken();
             $this->createAccessToken($res, $type);
