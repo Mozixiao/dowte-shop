@@ -14,12 +14,6 @@ class NewYearController extends BaseEndController
         return $this->render('index', $param);
     }
 
-    public function actionWish()
-    {
-        $wishes = $this->getWishes(\Yii::$app->request->post('name'));
-        $this->renderJson($wishes);
-    }
-
     private function getWishes($name)
     {
         $name = strtoupper($name);

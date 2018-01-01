@@ -24,7 +24,7 @@
     </style>
 </head>
 <body onselectstart = "return false" style="position: relative;">
-<span id="content" style="position: absolute;top: 30px;left: 30px;color: pink;font-family: FZKT"></span>
+<span id="content" style="font-size:20px;position: absolute;top: 30px;left: 30px;color: pink;font-family: FZKT"></span>
 <span style="z-index:-9999;font-family: FZKT"></span>
 <audio src="" id="audio" controls="controls" autoplay style="display: none">
     Your browser does not support the audio tag.
@@ -90,21 +90,9 @@
         var wordInter = setInterval(type, 200);
     }
 
-    function prom() {
-        var name = prompt("请输入你的姓名或姓名字母缩写(给每个人的祝福不同)", "");
-        $.ajax({
-            url: '/new-year/wish',
-            type:'POST',
-            dataType: 'json',
-            data:JSON.stringify({name:name}),
-        }).done(function (res) {
-            if (res) {
-               writeWishes(res.wishes, res.music);
-            }
-        })
-    }
     if (wishes == '' || music == '') {
-        prom();
+        writeWishes('', 'dongjingbutaile')
+//        prom();
     } else {
         writeWishes(wishes, music);
     }
