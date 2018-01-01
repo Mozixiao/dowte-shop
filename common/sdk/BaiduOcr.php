@@ -4,12 +4,15 @@ namespace common\sdk;
 
 use common\base\BaseException;
 use common\util\Http;
+use yii\base\Object;
 
-class BaiduOcr
+class BaiduOcr extends Object
 {
     const GET_ACCESS_URL = 'https://openapi.baidu.com/oauth/2.0/token';
     const PLATE_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/license_plate';
     const BASIC_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic';
+    const EXCEL_URL = 'https://aip.baidubce.com/rest/2.0/solution/v1/form_ocr/request';
+    const GET_EXCEL_URL = 'https://aip.baidubce.com/rest/2.0/solution/v1/form_ocr/get_request_result';
 
     /**
      * @var string 应用id
@@ -26,11 +29,20 @@ class BaiduOcr
      */
     public $accessToken;
 
-    public function __construct($apiKey, $secretKey, $accessToken = '')
+    public function ocrExcel($fileContent)
     {
-        $this->apiKey = $apiKey;
-        $this->secretKey = $secretKey;
-        $this->accessToken = $accessToken;
+        $res = self::run(self::EXCEL_URL . '?access_token=' . $this->accessToken,
+            ['image' => $fileContent], ['Content-Type:application/x-www-form-urlencoded']);
+
+        return $res;
+    }
+
+    public function getExcel($requestId)
+    {
+        $res = self::run(self::GET_EXCEL_URL . '?access_token=' . $this->accessToken,
+            ['request_id' => $requestId, 'result_type' => 'excel'], ['Content-Type:application/x-www-form-urlencoded']);
+
+        return $res;
     }
 
     public function getPlate($file_content)

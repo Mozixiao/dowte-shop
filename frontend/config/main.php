@@ -36,14 +36,24 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
+            'enableStrictParsing' => false,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'class' => '\yii\rest\UrlRule',
+                    'controller' => ['new-year' => 'new-year'],
+                    'prefix' => '',
+                    'tokens' => [
+                        '{name}' => '<name:[a-zA-Z]+>',
+                    ],
+                    'extraPatterns' => [
+                        'GET {name}' => 'index',
+                    ],
+                ],
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

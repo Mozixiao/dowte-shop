@@ -47,8 +47,8 @@ class AccessTokenForm extends BaseForm
     public function getBaiduToken($type, $apiKey, $secretKey)
     {
         $accessToken = $this->getAccessToken($type);
-        if (empty($accessToken) || (time() - $accessToken->access_token)/86400 >= 30) {
-            $baidu = new BaiduOcr($apiKey, $secretKey);
+        if (empty($accessToken) || (time() - $accessToken->created_at)/86400 >= 30) {
+            $baidu = new BaiduOcr(['apiKey' => $apiKey, 'secretKey' => $secretKey]);
             $res = $baidu->getAccessToken();
             $this->createAccessToken($res, $type);
             $accessToken = $res;
