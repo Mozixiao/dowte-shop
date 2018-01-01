@@ -25,6 +25,7 @@
 </head>
 <body onselectstart = "return false" style="position: relative;">
 <span id="content" style="position: absolute;top: 30px;left: 30px;color: pink;font-family: FZKT"></span>
+<span style="z-index:-9999;font-family: FZKT"></span>
 <audio src="" id="audio" controls="controls" autoplay style="display: none">
     Your browser does not support the audio tag.
 </audio>

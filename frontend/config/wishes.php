@@ -26,7 +26,7 @@ return [
             'music' => '',
         ],
         'ZYQ' => [
-            'wishes' => '',
+            'wishes' => "To周雨晴",
             'music' => '',
         ],
     ],
