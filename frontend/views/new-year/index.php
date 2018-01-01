@@ -34,8 +34,8 @@
     <canvas id="cas" style="background-color:rgba(0,5,24,1);">浏览器不支持canvas</canvas>
     <img src="/imgs/moon.png" alt="" id="moon" style="visibility: hidden;"/>
     <div style="display:none">
-        <div class="shape">新年快乐</div>
-        <div class="shape">新年快乐</div>
+        <div class="shape">元旦快乐</div>
+        <div class="shape">元旦快乐</div>
         <div class="shape">2018</div>
         <div class="shape">2018</div>
         <div class="shape">万事如意</div>
