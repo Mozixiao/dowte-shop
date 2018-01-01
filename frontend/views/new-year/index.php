@@ -111,8 +111,10 @@
     var ocas = document.createElement("canvas");
     var octx = ocas.getContext("2d");
     var ctx = canvas.getContext("2d");
+    console.log(window.innerWidth);
+    console.log(window.innerHeight);
     ocas.width = canvas.width = window.innerWidth;
-    ocas.height = canvas.height = window.innerWidth;
+    ocas.height = canvas.height = window.innerHeight;
     var bigbooms = [];
     window.onload = function(){
         cx=canvas.width/2;
@@ -132,9 +134,9 @@
         if (newTime - lastTime > 500 + (window.innerHeight - 767) / 2){
             var random = Math.random() * 100 > 10 ? true : false;//控制出现文字
             var x = getRandom(canvas.width / 5 , canvas.width * 4 / 5);//爆炸的x范围
-            var y = getRandom(50 , 200);//爆炸的y范围
+//            var y = getRandom(50 , window.innerHeight/2);//爆炸的y范围
             if(! random){
-                var bigboom = new Boom(getRandom(canvas.width/3,canvas.width*2/3) ,2,"#FFF" , {x:canvas.width/2 , y:200} , document.querySelectorAll(".shape")[parseInt(getRandom(0, document.querySelectorAll(".shape").length))]);
+                var bigboom = new Boom(getRandom(canvas.width/3,canvas.width*2/3) ,2,"#FFF" , {x:canvas.width/2 , y:window.innerHeight/2} , document.querySelectorAll(".shape")[parseInt(getRandom(0, document.querySelectorAll(".shape").length))]);
                 bigbooms.push(bigboom)
             }
             lastTime = newTime;
@@ -210,8 +212,8 @@
         },
         _move:function(){
             var dx = this.boomArea.x - this.x , dy = this.boomArea.y - this.y;
-            this.x = this.x+dx*0.01;
-            this.y = this.y+dy*0.01;
+            this.x = this.x+dx*0.05;
+            this.y = this.y+dy*0.05;
 
             if(Math.abs(dx)<=this.ba && Math.abs(dy)<=this.ba){
                 if(this.shape){
@@ -310,7 +312,7 @@
     //stars
     var maxRadius = 1 , stars=[];
     function drawBg(){
-        for(var i=0;i<300;i++){
+        for(var i=0;i<500;i++){
             var r = Math.random() * maxRadius;
             var x = Math.random() * canvas.width;
             var y = Math.random() * 2 * canvas.height - canvas.height;
@@ -573,21 +575,21 @@
         ctx.clearRect(0,0,cx*2,cy*2);
 
         ctx.fillStyle="#ff8";
-        for(i=-100;i<100;i+=3){
-            for(j=-100;j<100;j+=4){
-                x=i;z=j;y=25;
-                point=rasterizePoint(x,y,z);
-                if(point.d!=-1){
-                    size=250/(1+point.d);
-                    d = Math.sqrt(x * x + z * z);
-                    a = 0.75 - Math.pow(d / 100, 6) * 0.75;
-                    if(a>0){
-                        ctx.globalAlpha = a;
-                        ctx.fillRect(point.x-size/2,point.y-size/2,size,size);
-                    }
-                }
-            }
-        }
+//        for(i=-100;i<100;i+=3){
+//            for(j=-100;j<100;j+=4){
+//                x=i;z=j;y=25;
+//                point=rasterizePoint(x,y,z);
+//                if(point.d!=-1){
+//                    size=250/(1+point.d);
+//                    d = Math.sqrt(x * x + z * z);
+//                    a = 0.75 - Math.pow(d / 100, 6) * 0.75;
+//                    if(a>0){
+//                        ctx.globalAlpha = a;
+//                        ctx.fillRect(point.x-size/2,point.y-size/2,size,size);
+//                    }
+//                }
+//            }
+//        }
         ctx.globalAlpha=1;
         for(i=0;i<seeds.length;++i){
             point=rasterizePoint(seeds[i].x,seeds[i].y,seeds[i].z);
