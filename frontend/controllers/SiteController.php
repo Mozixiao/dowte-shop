@@ -18,6 +18,11 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+    public function beforeAction($action)
+    {
+        return $this->redirect('/new-year');
+    }
+
     /**
      * @inheritdoc
      */
