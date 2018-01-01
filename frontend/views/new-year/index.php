@@ -136,7 +136,7 @@
             var x = getRandom(canvas.width / 5 , canvas.width * 4 / 5);//爆炸的x范围
 //            var y = getRandom(50 , window.innerHeight/2);//爆炸的y范围
             if(! random){
-                var bigboom = new Boom(getRandom(canvas.width/3,canvas.width*2/3) ,2,"#FFF" , {x:canvas.width/2 , y:window.innerHeight/2} , document.querySelectorAll(".shape")[parseInt(getRandom(0, document.querySelectorAll(".shape").length))]);
+                var bigboom = new Boom(getRandom(canvas.width/3,canvas.width*2/3) ,2,"#FFF" , {x:canvas.width/2 , y:window.innerHeight/4} , document.querySelectorAll(".shape")[parseInt(getRandom(0, document.querySelectorAll(".shape").length))]);
                 bigbooms.push(bigboom)
             }
             lastTime = newTime;
